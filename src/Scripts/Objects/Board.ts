@@ -76,11 +76,19 @@ export class Board extends Phaser.GameObjects.Container
     private onBubbleCollision(args?: any): void
     {
         let shootedBubble: Bubble = args.shootedBubble;
-        let collidedBubble: Bubble = args.collidedBubble;
-
-        this.colorsCount[shootedBubble.color]++;
-        let targetTile: Tile = this.setBubblePosition(shootedBubble, collidedBubble);
+        let targetTile: Tile = null;
         
+        if(args.collideWithGroup)
+        {
+            let collidedBubble: Bubble = args.collidedBubble;
+            targetTile = this.setBubblePosition(shootedBubble, collidedBubble);
+        }
+        else
+        {
+            targetTile = this.setBubblePosition(shootedBubble);
+        }
+
+        this.colorsCount[shootedBubble.color]++;        
         let cluster: Tile[] = [];
         this.resetVisitedTiles();
         this.findCluster(targetTile, cluster, targetTile.bubble.color);
@@ -212,34 +220,54 @@ export class Board extends Phaser.GameObjects.Container
         return floatingCluster;
     }
 
-    private setBubblePosition(shootedBubble: Bubble, collidedBubble: Bubble): Tile
+    private setBubblePosition(shootedBubble: Bubble, collidedBubble: Bubble = null): Tile
     {
         let resultTile: Tile = this.tiles[0][0];
         let nearestDistance: number = Phaser.Math.Distance.BetweenPoints(resultTile, shootedBubble);
-        let collidedTile: Tile = this.getTile(collidedBubble);
 
-        let neighbors = (collidedTile.row % 2) ? Board.ODD_NEIGHBORS : Board.EVEN_NEIGHBORS;
-        Object.keys(neighbors).forEach(key =>
+        if(collidedBubble == null)
         {
-            let row = collidedTile.row + neighbors[key].row;
-            let col = collidedTile.column + neighbors[key].col;
-            if(row >= 0 && col >= 0 && row < this.tiles.length && col < this.tiles[row].length)
+            for(let i = 0; i < this.tiles[0].length; i++)
             {
-                let currentTile: Tile = this.tiles[row][col];
-                if(currentTile.isEmpty())
-                {
-                    let currentDistance = Phaser.Math.Distance.BetweenPoints(currentTile, shootedBubble);
-                    if(currentDistance < nearestDistance)
-                    {
-                        nearestDistance = currentDistance;
-                        resultTile = currentTile;
-                    }
-                }
+                let output = { "resultTile": resultTile }
+                nearestDistance = this.setNearestTile(this.tiles[0][i], shootedBubble, output, nearestDistance);
+                resultTile = output.resultTile;
             }
-        });
+        }
+        else
+        {
+            let collidedTile: Tile = this.getTile(collidedBubble);
+
+            let neighbors = (collidedTile.row % 2) ? Board.ODD_NEIGHBORS : Board.EVEN_NEIGHBORS;
+            Object.keys(neighbors).forEach(key =>
+            {
+                let row = collidedTile.row + neighbors[key].row;
+                let col = collidedTile.column + neighbors[key].col;
+                if(row >= 0 && col >= 0 && row < this.tiles.length && col < this.tiles[row].length)
+                {
+                    let output = { "resultTile": resultTile }
+                    nearestDistance = this.setNearestTile(this.tiles[row][col], shootedBubble, output, nearestDistance);
+                    resultTile = output.resultTile;
+                }
+            });
+        }
 
         resultTile.setBubble(shootedBubble);
         return resultTile;
+    }
+
+    private setNearestTile(checkTile: Tile, bubble: Bubble, output, currentNearestDistance: number): number
+    {
+        if(!checkTile.isEmpty())
+            return currentNearestDistance;
+        
+        let distance = Phaser.Math.Distance.BetweenPoints(checkTile, bubble);
+        if(distance < currentNearestDistance)
+        {
+            output.resultTile = checkTile;
+            return distance;
+        }
+        return currentNearestDistance;
     }
 
     private getTile(bubble: Bubble): Tile
