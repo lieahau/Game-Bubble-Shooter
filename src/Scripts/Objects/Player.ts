@@ -43,6 +43,7 @@ export class Player
     private static readonly DEFAULT_SPEED: number = 1000;
 
     bubbleManager: BubbleManager;
+    private bubbleColliders: Phaser.Physics.Arcade.Collider[];
 
     constructor(scene: Phaser.Scene, x: number, y: number, bubbleManager: BubbleManager, boundary: Boundary)
     {
@@ -109,31 +110,28 @@ export class Player
     private addBubbleCollider(): void
     {
         let bubble = this.bubble;
-        let bubbleColliders: Phaser.Physics.Arcade.Collider[] = [];
-        bubbleColliders.push(this.scene.physics.add.collider(bubble, this.boundary.left));
-        bubbleColliders.push(this.scene.physics.add.collider(bubble, this.boundary.right));
-        bubbleColliders.push(this.scene.physics.add.collider(
-            bubble, this.boundary.top, this.onBubbleCollide(bubble, bubbleColliders), () => { return !bubble.isCollisionEnter }, this)
+        this.bubbleColliders = [];
+        this.bubbleColliders.push(this.scene.physics.add.collider(bubble, this.boundary.left));
+        this.bubbleColliders.push(this.scene.physics.add.collider(bubble, this.boundary.right));
+        this.bubbleColliders.push(this.scene.physics.add.collider(
+            bubble, this.boundary.top, this.onBubbleCollide, () => { return !bubble.isCollisionEnter }, this)
         );
-        bubbleColliders.push(this.scene.physics.add.collider(
-            bubble, this.bubbleManager, this.onBubbleCollide(bubble, bubbleColliders), () => { return !bubble.isCollisionEnter }, this)
+        this.bubbleColliders.push(this.scene.physics.add.collider(
+            bubble, this.bubbleManager, this.onBubbleCollide, () => { return !bubble.isCollisionEnter }, this)
         );
     }
 
-    private onBubbleCollide(bubble: Bubble, colliders: Phaser.Physics.Arcade.Collider[]): () => void
+    private onBubbleCollide(shootedBubble: Bubble, collidedBubble: Bubble): void
     {
-        return function()
+        shootedBubble.OnCollisionEnter();
+        shootedBubble.setPlayer(false);
+        this.bubbleColliders.forEach(function(collider)
         {
-            bubble.OnCollisionEnter();
-            bubble.setPlayer(false);
-            colliders.forEach(function(collider)
-            {
-                this.scene.physics.world.removeCollider(collider);
-            }, this);
-            colliders = [];
+            this.scene.physics.world.removeCollider(collider);
+        }, this);
+        this.bubbleColliders = [];
 
-            this.scene.events.emit(EventKeys.BUBBLECOLLIDE, {"shootedBubble": bubble});
-        }
+        this.scene.events.emit(EventKeys.BUBBLECOLLIDE, {"shootedBubble": shootedBubble, "collidedBubble": collidedBubble});
     }
 
     private onDragStart(pointer: Phaser.Input.Pointer): void

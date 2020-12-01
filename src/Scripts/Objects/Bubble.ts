@@ -3,7 +3,6 @@ import { Tile } from "./Tile";
 import { BubbleColors, randomEnum } from "../Consts/Colors";
 import { AnimationKeys } from "../Consts/AnimationKeys";
 import { TextureKeys } from "../Consts/TextureKeys";
-import { BubbleManager } from "../Managers/BubbleManager";
 import { EventKeys } from "../Consts/EventKeys";
 
 export class Bubble extends Phaser.Physics.Arcade.Sprite

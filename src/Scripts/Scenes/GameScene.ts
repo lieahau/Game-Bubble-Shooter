@@ -13,7 +13,6 @@ import { FPSText } from "../Objects/FPSText";
 
 import { Board } from "../Objects/Board";
 import { Tile } from "../Objects/Tile"
-import { Bubble } from "../Objects/Bubble";
 import { Player } from "../Objects/Player";
 
 import { PanelEndGame } from "../Objects/PanelEndGame";

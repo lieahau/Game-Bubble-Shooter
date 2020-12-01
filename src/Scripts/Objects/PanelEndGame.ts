@@ -1,5 +1,4 @@
 import "phaser";
-import { Game } from "phaser";
 import { EventKeys } from "../Consts/EventKeys";
 import { TextureKeys } from "../Consts/TextureKeys";
 import { Utility } from "../Consts/Utility";
