@@ -3,6 +3,10 @@
   "version": "0.1.0",
   "description": "A classic bubble shooter game.",
   "main": "index.js",
+  "engines": {
+    "node": "12.x",
+    "npm": "6.x"
+  },
   "scripts": {
     "build": "webpack",
     "dev": "webpack --watch & live-server --port=8080",
