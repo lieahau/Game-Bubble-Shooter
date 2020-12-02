@@ -50,7 +50,7 @@ export class Player
         this.scene = scene;
         
         this.arrowHint = scene.add.image(x, y, TextureKeys.Arrow).setVisible(false);
-        this.arrowHint.setDisplaySize(Tile.WIDTH*3, Tile.HEIGHT*3).setTint(0xaa0000);
+        this.arrowHint.setDisplaySize(Tile.WIDTH*3, Tile.HEIGHT*3).setTint(0xaa0000).setDepth(1);
         this.lineHint = new Phaser.Geom.Line();
         this.graphics = scene.add.graphics().setDefaultStyles({ lineStyle: { width: Utility.getScaleByWidth(scene, 5), color: 0xffffff, alpha: 1 } });
 
