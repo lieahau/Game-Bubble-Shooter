@@ -27,7 +27,7 @@ export class Tile extends Phaser.GameObjects.Rectangle
         this.row = row;
         this.column = column;
         this.setBubble(bubble);
-        this.setStrokeStyle(1, 0xffffff, 1);
+        // this.setStrokeStyle(1, 0xffffff, 1);
     }
 
     public static calculateTileSize(scene: Phaser.Scene): void
@@ -41,11 +41,11 @@ export class Tile extends Phaser.GameObjects.Rectangle
         this.bubble = bubble;
         if(bubble != null)
         {
-            this.setFillStyle(0xffffff, 0.5);
+            // this.setFillStyle(0xffffff, 0.5);
             bubble.body.reset(this.x, this.y)
         }
-        else
-            this.setFillStyle();
+        // else
+        //     this.setFillStyle();
     }
 
     public resetVisited(): void
