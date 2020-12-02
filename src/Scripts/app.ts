@@ -4,11 +4,11 @@ import { GameScene } from "./Scenes/GameScene";
 
 const config: Phaser.Types.Core.GameConfig = {
   title: "Bubble Shooter",
-  width: 720,
-  height: 1080,
   scale: {
-      mode: Phaser.Scale.FIT, // Fit to window
-      autoCenter: Phaser.Scale.CENTER_BOTH // Center vertically and horizontally
+    width: 1440,
+    height: 2560,
+    mode: Phaser.Scale.FIT, // Fit to window
+    autoCenter: Phaser.Scale.CENTER_BOTH, // Center vertically and horizontally
   },
   parent: "game",
   scene: [PreloadScene, GameScene],
