@@ -26,8 +26,6 @@ export class Player
 
     private shootPath: Phaser.Geom.Line;
     private shootReflectPath: Phaser.Geom.Line;
-    private shootHint: Phaser.GameObjects.Group;
-    private shootReflectHint: Phaser.GameObjects.Group;
     private shootIntersectPoint: Phaser.Geom.Point;
     private shootIntersectReflectPoint: Phaser.Geom.Point;
     private tempCircle: Phaser.Geom.Circle;
@@ -59,16 +57,6 @@ export class Player
         this.shootIntersectPoint = new Phaser.Geom.Point();
         this.shootIntersectReflectPoint = new Phaser.Geom.Point();
         this.tempCircle = new Phaser.Geom.Circle();
-        this.shootHint = scene.add.group({
-            classType: Phaser.GameObjects.Image,
-            defaultKey: TextureKeys.Hint,
-            maxSize: -1,
-        });
-        this.shootReflectHint = scene.add.group({
-            classType: Phaser.GameObjects.Image,
-            defaultKey: TextureKeys.Hint,
-            maxSize: -1,
-        })
 
         this.x = x;
         this.y = y;
@@ -250,14 +238,13 @@ export class Player
                 Phaser.Geom.Intersects.LineToLine(this.shootReflectPath, topBound, this.shootIntersectReflectPoint);
 
             this.findIntersectLineToBubble(this.shootReflectPath, this.shootIntersectReflectPoint, inputAngle, true);
-            
+
             length = Phaser.Math.Distance.BetweenPoints(this.shootIntersectPoint, this.shootIntersectReflectPoint);
             Phaser.Geom.Line.SetToAngle(this.shootReflectPath, this.shootIntersectPoint.x, this.shootIntersectPoint.y, reflectAngle, length);
 
             this.graphics.strokeLineShape(this.shootReflectPath);
         }
 
-        // Phaser.Actions.PlaceOnLine(this.shootHint.getChildren(), this.shootPath);
         this.graphics.strokeLineShape(this.shootPath);
     }
 
