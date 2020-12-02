@@ -8,7 +8,7 @@ export class PanelEndGame
     scene: Phaser.Scene;
     panel: Phaser.GameObjects.Image;
     resultText: Phaser.GameObjects.Text;
-    replayButton: Phaser.GameObjects.Sprite;
+    replayButton: Phaser.GameObjects.Image;
 
     constructor(scene: Phaser.Scene, x: number, y: number)
     {
@@ -28,7 +28,7 @@ export class PanelEndGame
             }
         ).setOrigin(0.5).setDepth(2);
 
-        this.replayButton = scene.add.sprite(x, y + (this.panel.displayWidth/2*0.1), TextureKeys.ReplayButton);
+        this.replayButton = scene.add.image(x, y + (this.panel.displayWidth/2*0.1), TextureKeys.ReplayButton);
         this.replayButton.setDisplaySize(this.panel.displayWidth/3, this.panel.displayWidth/3);
         this.replayButton.setDepth(2);
         
