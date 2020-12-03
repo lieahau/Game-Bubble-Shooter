@@ -244,10 +244,22 @@ export class Player
             length = Phaser.Math.Distance.BetweenPoints(this.shootIntersectPoint, this.shootIntersectReflectPoint);
             Phaser.Geom.Line.SetToAngle(this.shootReflectPath, this.shootIntersectPoint.x, this.shootIntersectPoint.y, reflectAngle, length);
 
-            this.graphics.strokeLineShape(this.shootReflectPath);
+            this.drawDottedLine(this.shootReflectPath);
+            // this.graphics.strokeLineShape(this.shootReflectPath);
         }
 
-        this.graphics.strokeLineShape(this.shootPath);
+        this.drawDottedLine(this.shootPath)
+        // this.graphics.strokeLineShape(this.shootPath);
+    }
+
+    private drawDottedLine(line: Phaser.Geom.Line)
+    {
+        let points: Phaser.Geom.Point[] = line.getPoints(0, Utility.getScaleByWidth(this.scene, 30));
+        this.graphics.fillStyle(0xffffff, 1);
+        for (var i = 0; i < points.length; i++)
+        {
+            this.graphics.fillCircle(points[i].x, points[i].y, Utility.getScaleByWidth(this.scene, 5));
+        }
     }
 
     private findIntersectLineToBubble(line: Phaser.Geom.Line, intersectPoint: Phaser.Geom.Point, inputAngle: number, reflecting: boolean): boolean
