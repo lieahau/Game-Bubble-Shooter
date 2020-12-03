@@ -49,8 +49,8 @@ export class Bubble extends Phaser.Physics.Arcade.Sprite
         this.setFrame(frame, false, false);
         this.setDisplaySize(Tile.WIDTH*1.5, Tile.HEIGHT*1.5);
 
-        this.setBodySize(this.width/1.5, this.height/1.5);
-        this.body.setCircle(this.width/3);
+        this.setBodySize(this.width/2.5, this.height/2.5, true);
+        this.body.setCircle(this.width/5);
         
         this.OnCollisionExit();
     }
@@ -95,7 +95,7 @@ export class Bubble extends Phaser.Physics.Arcade.Sprite
         this.scene.events.emit(EventKeys.DESPAWNBUBBLE, this);
     }
 
-    playAnimFallen(): void
+    public playAnimFallen(): void
     {
         this.setVelocityY(1000);
         this.scene.time.addEvent({
