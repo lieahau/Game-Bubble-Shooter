@@ -37,8 +37,8 @@ export class Player
     private angle: number;
     inputState: InputState;
 
-    private static readonly MAX_SPEED: number = 3000;
-    private static readonly DEFAULT_SPEED: number = 2000;
+    private static readonly MAX_SPEED: number = 4000;
+    private static readonly DEFAULT_SPEED: number = 3000;
 
     bubbleManager: BubbleManager;
     private bubbleColliders: Phaser.Physics.Arcade.Collider[];
