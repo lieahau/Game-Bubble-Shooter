@@ -184,7 +184,10 @@ export class Player
     {
         this.clearHint();
         if(this.inputState != InputState.Drag)
+        {
+            this.inputState = InputState.None;
             return;
+        }
         
         this.inputState = InputState.End // TODO: Change this to END later;
         let speed = Utility.getScaleByWidth(this.scene, Player.DEFAULT_SPEED);
