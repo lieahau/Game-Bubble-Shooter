@@ -214,9 +214,18 @@ export class Player
 
     private drawHint(pointer: Phaser.Input.Pointer, inputAngle: number): void
     {
-        let leftBound: Phaser.Geom.Line = this.boundary.left.getBounds().getLineB();
         let topBound: Phaser.Geom.Line = this.boundary.top.getBounds().getLineC();
-        let rightBound: Phaser.Geom.Line = this.boundary.right.getBounds().getLineD();
+
+        let adjustXBound: number = this.bubble.body.radius * this.bubble.scale;
+        let leftBound: Phaser.Geom.Line = new Phaser.Geom.Line();
+        leftBound = Object.assign(leftBound, this.boundary.left.getBounds().getLineB());
+        leftBound.x1 += adjustXBound;
+        leftBound.x2 += adjustXBound;
+
+        let rightBound: Phaser.Geom.Line = new Phaser.Geom.Line();
+        rightBound = Object.assign(rightBound, this.boundary.right.getBounds().getLineD());
+        rightBound.x1 -= adjustXBound;
+        rightBound.x2 -= adjustXBound;
 
         /* set arrow angle */
         this.arrowHint.setAngle(Phaser.Math.RadToDeg(inputAngle+Phaser.Math.DegToRad(90)));
