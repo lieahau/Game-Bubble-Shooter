@@ -4,5 +4,4 @@ export enum TextureKeys
     Arrow = "arrow",
     ReplayButton = "replay",
     Bubble = "bubble",
-    Hint = " hint"
 };

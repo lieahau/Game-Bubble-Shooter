@@ -16,7 +16,6 @@ export class PreloadScene extends Phaser.Scene
         this.load.image(TextureKeys.Panel, "Panel.png");
         this.load.image(TextureKeys.Arrow, "arrow.png");
         this.load.image(TextureKeys.ReplayButton, "Replay.png");
-        this.load.image(TextureKeys.Hint, "fourpointstar.png");
         this.load.spritesheet(TextureKeys.Bubble, "bubblesprite.png", { frameWidth: 180, frameHeight: 180 });
 
         this.load.audio(AudioKeys.Shoot, "Audios/Blop.mp3");
