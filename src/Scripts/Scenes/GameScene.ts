@@ -65,7 +65,8 @@ export class GameScene extends Phaser.Scene
             this.cameras.main.width/2,
             this.background.header.height + this.background.playArea.height,
             this.bubbleManager,
-            this.boundary
+            this.boundary,
+            this.background.footer.getBounds()
         );
 
         this.endGameScreen = new PanelEndGame(

@@ -36,6 +36,7 @@ export class Player
     bubble: Bubble;
     private angle: number;
     inputState: InputState;
+    touchArea: Phaser.Geom.Rectangle;
 
     private static readonly MAX_SPEED: number = 4000;
     private static readonly DEFAULT_SPEED: number = 3000;
@@ -43,7 +44,7 @@ export class Player
     bubbleManager: BubbleManager;
     private bubbleColliders: Phaser.Physics.Arcade.Collider[];
 
-    constructor(scene: Phaser.Scene, x: number, y: number, bubbleManager: BubbleManager, boundary: Boundary)
+    constructor(scene: Phaser.Scene, x: number, y: number, bubbleManager: BubbleManager, boundary: Boundary, touchArea: Phaser.Geom.Rectangle)
     {
         this.scene = scene;
         
@@ -68,6 +69,7 @@ export class Player
         this.angle = Phaser.Math.DegToRad(-90);
         this.inputState = InputState.None;
 
+        this.touchArea = touchArea;
         scene.events.on(EventKeys.NEXTBUBBLE, this.setRandomBubble, this);
     }
 
@@ -86,11 +88,12 @@ export class Player
         this.bubble.setPlayer();
         this.addBubbleCollider();
 
-        this.tempCircle.setTo(0, 0, this.bubble.body.radius * this.bubble.scale);
+        this.tempCircle.setTo(0, 0, this.bubble.width/2);
         this.inputState = InputState.None;
-        this.bubble.setInteractive({
-            hitArea: new Phaser.Geom.Circle(this.bubble.width/2, this.bubble.height/2, this.bubble.width/2),
-            hitAreaCallback: Phaser.Geom.Circle.Contains,
+
+        this.graphics.setInteractive({
+            hitArea: this.touchArea,
+            hitAreaCallback: Phaser.Geom.Rectangle.Contains,
             draggable: true
         }).on(Phaser.Input.Events.GAMEOBJECT_DRAG_START, this.onDragStart, this)
         .on(Phaser.Input.Events.GAMEOBJECT_DRAG, this.onDrag, this)
@@ -141,12 +144,25 @@ export class Player
         this.bubbleColliders = [];
     }
 
+    private getAngle(pointer: Phaser.Input.Pointer)
+    {
+        let inputAngle = Phaser.Math.Angle.Between(pointer.x, pointer.y, this.bubble.body.x, this.bubble.body.y);
+        if(inputAngle > 0)
+        {
+            return inputAngle;
+        }
+        inputAngle = Phaser.Math.Clamp(inputAngle, Phaser.Math.DegToRad(-170), Phaser.Math.DegToRad(-10));
+        return inputAngle;   
+    }
+
     private onDragStart(pointer: Phaser.Input.Pointer): void
     {
         // not ready for input
         if(this.inputState != InputState.None)
             return;
  
+        let inputAngle = this.getAngle(pointer);
+        this.angle = inputAngle;
         this.arrowHint.setVisible(true);
         this.drawHint(pointer, this.angle);
         this.inputState = InputState.Start;
@@ -158,19 +174,15 @@ export class Player
             return;
     
         // get input angle
-        let inputAngle = pointer.getAngle(); // positive = kebawah, negative = keatas
-        if(inputAngle < 0) // drag keatas
+        let inputAngle = this.getAngle(pointer);
+
+        if(inputAngle > 0)
         {
             // cancel input
             this.clearHint();
             this.inputState = InputState.None;
             return;
         }
-        if(inputAngle > 0) // drag kebawah
-            inputAngle -= Phaser.Math.DegToRad(180); // shoot keatas
-
-        // restrict angle
-        inputAngle = Phaser.Math.Clamp(inputAngle, Phaser.Math.DegToRad(-170), Phaser.Math.DegToRad(-10));
 
         // update data
         this.angle = inputAngle;
@@ -189,14 +201,15 @@ export class Player
             return;
         }
         
-        this.inputState = InputState.End // TODO: Change this to END later;
+        this.inputState = InputState.End;
         let speed = Utility.getScaleByWidth(this.scene, Player.DEFAULT_SPEED);
         speed = (speed > Player.MAX_SPEED) ? Player.MAX_SPEED : speed;
         this.scene.physics.velocityFromRotation(this.angle, speed, this.bubble.body.velocity);
-        this.bubble.removeInteractive();
-        this.bubble.off(Phaser.Input.Events.GAMEOBJECT_DRAG_START);
-        this.bubble.off(Phaser.Input.Events.GAMEOBJECT_DRAG);
-        this.bubble.off(Phaser.Input.Events.GAMEOBJECT_DRAG_END);
+
+        this.graphics.removeInteractive();
+        this.graphics.off(Phaser.Input.Events.GAMEOBJECT_DRAG_START);
+        this.graphics.off(Phaser.Input.Events.GAMEOBJECT_DRAG);
+        this.graphics.off(Phaser.Input.Events.GAMEOBJECT_DRAG_END);
     }
 
     private drawHint(pointer: Phaser.Input.Pointer, inputAngle: number): void
@@ -248,11 +261,9 @@ export class Player
             Phaser.Geom.Line.SetToAngle(this.shootReflectPath, this.shootIntersectPoint.x, this.shootIntersectPoint.y, reflectAngle, length);
 
             this.drawDottedLine(this.shootReflectPath);
-            // this.graphics.strokeLineShape(this.shootReflectPath);
         }
 
         this.drawDottedLine(this.shootPath)
-        // this.graphics.strokeLineShape(this.shootPath);
     }
 
     private drawDottedLine(line: Phaser.Geom.Line)
