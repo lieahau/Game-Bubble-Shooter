@@ -56,15 +56,6 @@ export class ScoreManager
         }
     }
 
-    private minusScore(value: number): void
-    {
-        if(value > 0)
-        {
-            this.score -= (this.score - value < 0) ? 0 : value;
-            this.updateScoreText();
-        }
-    }
-
     private updateScoreText(): void
     {
         if(this.updatingScoreEvent != null)

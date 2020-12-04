@@ -164,8 +164,10 @@ export class Board extends Phaser.GameObjects.Container
         if(currentTile.isEmpty() || (targetColor != null && currentTile.bubble.color != targetColor))
             return;
         
+        // bubble in this tile has same color as the targeted color
         cluster.push(currentTile);
 
+        // iterate its neighbors and do dfs
         let neighbors = (currentTile.row % 2) ? Board.ODD_NEIGHBORS : Board.EVEN_NEIGHBORS;
         Object.keys(neighbors).forEach(key =>
         {
@@ -182,13 +184,18 @@ export class Board extends Phaser.GameObjects.Container
     private findFloatingCluster(): Tile[]
     {
         let floatingCluster: Tile[] = [];
+
+        // reset visited tiles
         this.resetVisitedTiles();
 
+        // iterate all tiles on the board
         for(let i = 0; i < this.tiles.length; i++)
         {
             for(let j = 0; j < this.tiles[i].length; j++)
             {
                 let tile: Tile = this.tiles[i][j];
+
+                // continue to the next loop if tile is empty or already visited
                 if(tile.visited || tile.isEmpty())
                     continue;
                 
@@ -212,6 +219,7 @@ export class Board extends Phaser.GameObjects.Container
                     }
                 }
 
+                // this cluster is floating, push it to floatingCluster array
                 if(floating)
                     floatingCluster.push(...cluster);
             }
@@ -227,6 +235,7 @@ export class Board extends Phaser.GameObjects.Container
 
         if(collidedBubble == null)
         {
+            // bubble collide with top boundary, find the nearest tile based on first row.
             for(let i = 0; i < this.tiles[0].length; i++)
             {
                 let output = { "resultTile": resultTile }
@@ -236,8 +245,10 @@ export class Board extends Phaser.GameObjects.Container
         }
         else
         {
+            // bubble collide with another bubble
             let collidedTile: Tile = this.getTile(collidedBubble);
 
+            // iterate the collided bubble neighbors to find the nearest tile
             let neighbors = (collidedTile.row % 2) ? Board.ODD_NEIGHBORS : Board.EVEN_NEIGHBORS;
             Object.keys(neighbors).forEach(key =>
             {
@@ -252,6 +263,7 @@ export class Board extends Phaser.GameObjects.Container
             });
         }
 
+        // set the bubble to the tile
         resultTile.setBubble(shootedBubble);
         return resultTile;
     }

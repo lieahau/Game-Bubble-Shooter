@@ -1,7 +1,6 @@
 import "phaser";
 
 import { SceneKeys } from "../Consts/SceneKeys";
-import { Utility } from "../Consts/Utility";
 import { EventKeys } from "../Consts/EventKeys";
 
 import { ScoreManager } from "../Managers/ScoreManager";
@@ -39,27 +38,29 @@ export class GameScene extends Phaser.Scene
 
     init(): void
     {
+        // calculate tile size
         Tile.calculateTileSize(this);
     }
     
     create(): void
     {
+        // setup board, bubble pool
         this.board = new Board(this);
         this.bubbleManager = new BubbleManager(this);
         this.bubbleManager.initializeWithSize(40);
 
+        // setup background, fps text, and score
         this.background = new Background(this, this.board.rowheight);
         this.fpsText = new FPSText(this);
         ScoreManager.Instance.init(this, this.background.header.width/2, this.background.header.height/2);
 
-        this.board.setY(this.background.header.height + Tile.HEIGHT/2);
-        this.board.createLevel(this.bubbleManager);
-
+        // setup boundary
         let leftX = -Tile.WIDTH, leftY = this.background.header.height, leftW = Tile.WIDTH, leftH = this.background.playArea.height;
         let topX = leftX, topY = 0, topW = this.background.header.width + (Tile.WIDTH * 2), topH = this.background.header.height;
         let rightX = this.cameras.main.width, rightY = leftY, rightW = leftW, rightH = leftH;
         this.boundary = new Boundary(this, leftX, leftY, leftW, leftH, topX, topY, topW, topH, rightX, rightY, rightW, rightH);
         
+        // setup player
         this.player = new Player(
             this,
             this.cameras.main.width/2,
@@ -69,16 +70,18 @@ export class GameScene extends Phaser.Scene
             this.background.footer.getBounds()
         );
 
+        // setup end game screen
         this.endGameScreen = new PanelEndGame(
             this,
             this.cameras.main.width/2,
             this.cameras.main.height/2,
         );
-        this.events.emit(EventKeys.NEXTBUBBLE, {colorsCount: this.board.colorsCount});
-    }
 
-    update(time: number, delta: number): void
-    {
-        let deltaTime = delta/1000; // delta in seconds
+        // setup new level
+        this.board.setY(this.background.header.height + Tile.HEIGHT/2);
+        this.board.createLevel(this.bubbleManager);
+
+        // start play
+        this.events.emit(EventKeys.NEXTBUBBLE, {colorsCount: this.board.colorsCount});
     }
 };
